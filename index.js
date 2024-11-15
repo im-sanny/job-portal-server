@@ -37,10 +37,17 @@ async function run() {
     });
 
     // get a single job data from db using job id
-    app.get("/jobs/:id", async (res, res) => {
+    app.get("/job/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await jobsCollection.findOne(query);
+      res.send(result);
+    });
+
+    // save a bid data in db
+    app.post("/bid", async (req, res) => {
+      const bidData = req.body;
+      const result = await bidsCollection.insertOne(bidData);
       res.send(result);
     });
 
