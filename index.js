@@ -1,13 +1,13 @@
-const express = require("express");
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const cors = require("cors");
-require("dotenv").config();
+const express = require('express');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const cors = require('cors');
+require('dotenv').config();
 const port = process.env.PORT || 9000;
 
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -26,18 +26,18 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const jobsCollection = client.db("jobPortal").collection("jobs");
-    const bidsCollection = client.db("jobPortal").collection("bids");
+    const jobsCollection = client.db('jobPortal').collection('jobs');
+    const bidsCollection = client.db('jobPortal').collection('bids');
 
     // get all jobs data from db
-    app.get("/jobs", async (req, res) => {
+    app.get('/jobs', async (req, res) => {
       const result = await jobsCollection.find().toArray();
 
       res.send(result);
     });
 
     // get a single job data from db using job id
-    app.get("/job/:id", async (req, res) => {
+    app.get('/job/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await jobsCollection.findOne(query);
@@ -45,23 +45,30 @@ async function run() {
     });
 
     // save a bid data in db
-    app.post("/bid", async (req, res) => {
+    app.post('/bid', async (req, res) => {
       const bidData = req.body;
       const result = await bidsCollection.insertOne(bidData);
       res.send(result);
     });
+    
+    // save a job data in db
+    app.post('/job', async (req, res) => {
+      const jobData = req.body;
+      const result = await jobsCollection.insertOne(jobData);
+      res.send(result);
+    });
 
-    await client.db("admin").command({ ping: 1 });
+    await client.db('admin').command({ ping: 1 });
     console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
+      'Pinged your deployment. You successfully connected to MongoDB!'
     );
   } finally {
   }
 }
 run().catch(console.dir);
 
-app.get("/", (req, res) => {
-  res.send("Hello form job portal....");
+app.get('/', (req, res) => {
+  res.send('Hello form job portal....');
 });
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
